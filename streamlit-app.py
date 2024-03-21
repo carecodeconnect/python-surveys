@@ -34,7 +34,6 @@ def summarize_jetbrains_data(proglang_data):
 
     language_counts = proglang_data.groupby('Language').agg(pl.count().alias('Count'))
     top_languages = language_counts.sort(by='Count', reverse=True).head(10)
-
     return top_languages
 
 def main():
@@ -72,20 +71,13 @@ def main():
         st.header('JetBrains Developer Ecosystem Survey 2022 - Top 10 Programming Languages')
         top_languages = summarize_jetbrains_data(proglang_data_pl)  # Summarize to get top languages
 
-        # Convert top_languages to Pandas DataFrame for easier handling in Streamlit and Plotly
-        top_languages_pd = top_languages.to_pandas()
-
         # Display the data as a table
-        st.table(top_languages_pd)
+        st.table(top_languages)
 
-        # Optionally, create and display a bar plot
-        fig_jetbrains = px.bar(top_languages_pd, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
+        # Create and display a bar plot directly from Polars DataFrame
+        fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
         fig_jetbrains.update_layout(yaxis={'categoryorder': 'total ascending'}, xaxis_title='Count', yaxis_title='Programming Language')
         st.plotly_chart(fig_jetbrains, use_container_width=True)
 
 if __name__ == "__main__":
     main()
-
-
-
-
