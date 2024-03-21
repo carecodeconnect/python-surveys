@@ -31,9 +31,10 @@ def load_jetbrains_data_polars():
 def summarize_jetbrains_data(proglang_data):
     if not isinstance(proglang_data, pl.DataFrame):
         raise TypeError("proglang_data must be a Polars DataFrame")
-    # Updated to use `group_by` and `pl.len()` according to deprecation warnings and removed sorting
-    language_counts = proglang_data.group_by('Language').agg(pl.len().alias('Count'))
-    return language_counts
+
+    language_counts = proglang_data.groupby('Language').agg(pl.count().alias('Count'))
+    top_languages = language_counts.sort(by='Count', reverse=True).head(10)
+    return top_languages
 
 def main():
     statista_survey_df = load_statista_data()
@@ -44,7 +45,7 @@ def main():
 
     survey_selection = st.sidebar.radio(
         "Choose a survey to display:",
-        ('Stack Overflow Developer Survey', 'Statista Programming Survey', 'JetBrains Developer Ecosystem Survey')
+        ('Stack Overflow Developer Survey', 'Statista Programming Survey', 'JetBrains Developer Ecosystem Survey 2022')
     )
 
     if survey_selection == 'Stack Overflow Developer Survey':
@@ -60,15 +61,18 @@ def main():
             The data represents a snapshot of the programming landscape, showing the popularity of languages among 87,585 respondents. 
             For more details, [visit the Statista page](https://www.statista.com/statistics/793628/worldwide-developer-survey-most-used-languages/).
         """)
-        # Removed the table display code for Statista survey as requested
+        st.table(statista_survey_df[['Language', 'Percentage', 'Respondents']])
         fig_statista = px.bar(statista_survey_df, x='Respondents', y='Language', text='Percentage', orientation='h', title='Top 10 Programming Languages by Number of Respondents')
         fig_statista.update_traces(texttemplate='%{text}%', textposition='inside')
         fig_statista.update_layout(yaxis={'categoryorder': 'total ascending'}, xaxis_title='Number of Respondents', yaxis_title=None)
         st.plotly_chart(fig_statista, use_container_width=True)
 
     elif survey_selection == 'JetBrains Developer Ecosystem Survey 2022':
-        st.header('JetBrains Developer Ecosystem Survey 2022 - Top Programming Languages')
+        st.header('JetBrains Developer Ecosystem Survey 2022 - Top 10 Programming Languages')
         top_languages = summarize_jetbrains_data(proglang_data_pl)  # Summarize to get top languages
+
+        # Display the data as a table
+        st.table(top_languages)
 
         # Create and display a bar plot directly from Polars DataFrame
         fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
