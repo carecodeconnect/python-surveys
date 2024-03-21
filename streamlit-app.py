@@ -49,6 +49,10 @@ def main():
 
     if survey_selection == 'Stack Overflow Developer Survey':
         st.header('Stack Overflow Developer Survey - Languages Worked With')
+        st.markdown("""
+            This section presents the top 10 programming languages that developers have worked with according to the Stack Overflow Developer Survey 2023. 
+            To explore more about this survey and its findings, [visit the survey website](https://survey.stackoverflow.co/2023/).
+        """)
         fig_so = px.bar(languages_df, y='Language', x='Count', title='Top 10 Programming Languages Used According to Stack Overflow Survey', orientation='h')
         fig_so.update_layout(yaxis={'categoryorder': 'total descending'}, yaxis_title='Programming Language', xaxis_title='Count')
         st.plotly_chart(fig_so, use_container_width=True)
@@ -67,11 +71,15 @@ def main():
         st.plotly_chart(fig_statista, use_container_width=True)
 
     elif survey_selection == 'JetBrains Developer Ecosystem Survey 2022':
-        st.header('JetBrains Developer Ecosystem Survey 2022 - Top 10 Programming Languages')
+        st.header('JetBrains Developer Ecosystem Survey 2022 - Top Programming Languages')
+        st.markdown("""
+            This section highlights the top programming languages as revealed by the JetBrains Developer Ecosystem Survey 2022. 
+            For a deeper dive into the survey's insights, [check out their website](https://www.jetbrains.com/lp/devecosystem-2022/).
+        """)
         top_languages = summarize_jetbrains_data(proglang_data_pl)  # Summarize to get top languages
 
         # Create and display a bar plot directly from Polars DataFrame
-        fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
+        fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top Programming Languages in JetBrains Developer Ecosystem Survey 2022')
         fig_jetbrains.update_layout(yaxis={'categoryorder': 'total ascending'}, xaxis_title='Count', yaxis_title='Programming Language')
         st.plotly_chart(fig_jetbrains, use_container_width=True)
 
