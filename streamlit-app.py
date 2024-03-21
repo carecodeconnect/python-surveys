@@ -83,5 +83,5 @@ def main():
         languages_df = load_stack_overflow_data()
         proglang_data_pl = load_jetbrains_data_polars()
     
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
