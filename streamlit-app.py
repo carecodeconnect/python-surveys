@@ -60,7 +60,7 @@ def main():
             To explore more about this survey and its findings, [visit the survey website](https://survey.stackoverflow.co/2023/).
         """)
         # Sort the data in descending order
-        languages_df = languages_df.sort_values(by='Count', ascending=False)
+        languages_df = languages_df.sort_values(by='Count', ascending=True)
         fig_so = px.bar(languages_df, y='Language', x='Count', title='Top 10 Programming Languages Used According to Stack Overflow Survey', orientation='h')
         fig_so.update_layout(yaxis={'categoryorder': 'total descending'}, yaxis_title='Programming Language', xaxis_title='Count')
         st.plotly_chart(fig_so, use_container_width=True)
