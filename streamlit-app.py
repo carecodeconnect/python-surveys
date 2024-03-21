@@ -79,9 +79,9 @@ def main():
         fig_jetbrains.update_layout(yaxis={'categoryorder': 'total descending'}, xaxis_title='Count', yaxis_title='Programming Language')
         st.plotly_chart(fig_jetbrains, use_container_width=True)
 
-        statista_survey_df = load_statista_data()
-        languages_df = load_stack_overflow_data()
-        proglang_data_pl = load_jetbrains_data_polars()
+    statista_survey_df = load_statista_data()
+    languages_df = load_stack_overflow_data()
+    proglang_data_pl = load_jetbrains_data_polars()
     
 if __name__ == "__main__":
     main()
