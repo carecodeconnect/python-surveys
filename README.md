@@ -29,6 +29,10 @@ streamlit run streamlit-app.py
 - Use the sidebar to select the survey you want to visualize.
 - Explore the interactive charts that display the survey results.
 
+Or:
+
+- View the app running live with Streamlit [here](https://python-surveys.streamlit.app/)!
+
 # Data Sources :books:
 
 - Statista Programming Survey 2023
