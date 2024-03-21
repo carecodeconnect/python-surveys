@@ -3,3 +3,4 @@ plotly==5.20.0
 polars==0.20.16
 Requests==2.31.0
 streamlit==1.32.2
+openpyxl==3.1.2
