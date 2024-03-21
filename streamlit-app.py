@@ -31,6 +31,7 @@ def load_jetbrains_data_polars():
 def summarize_jetbrains_data(proglang_data):
     if not isinstance(proglang_data, pl.DataFrame):
         raise TypeError("proglang_data must be a Polars DataFrame")
+    # Updated to use `group_by` and `pl.len()` according to deprecation warnings and removed sorting
     language_counts = proglang_data.group_by('Language').agg(pl.len().alias('Count'))
     return language_counts
 
