@@ -37,6 +37,11 @@ def summarize_jetbrains_data(proglang_data):
 def main():
     st.title('Programming Languages Surveys Visualization')
 
+    # Load data at the beginning of the main function
+    statista_survey_df = load_statista_data()
+    languages_df = load_stack_overflow_data()
+    proglang_data_pl = load_jetbrains_data_polars()
+
     survey_selection = st.sidebar.radio(
         "Choose a survey to display:",
         ('Statista Programming Survey', 'Stack Overflow Developer Survey', 'JetBrains Developer Ecosystem Survey')
@@ -78,10 +83,6 @@ def main():
         fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
         fig_jetbrains.update_layout(yaxis={'categoryorder': 'total descending'}, xaxis_title='Count', yaxis_title='Programming Language')
         st.plotly_chart(fig_jetbrains, use_container_width=True)
-
-    statista_survey_df = load_statista_data()
-    languages_df = load_stack_overflow_data()
-    proglang_data_pl = load_jetbrains_data_polars()
     
 if __name__ == "__main__":
     main()
