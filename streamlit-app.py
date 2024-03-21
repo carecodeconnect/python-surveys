@@ -11,7 +11,7 @@ def load_statista_data():
     statista_survey_df.columns = ['Language', 'Percentage']
     statista_survey_df['Percentage'] = round(statista_survey_df['Percentage']).astype(int)
     statista_survey_df['Respondents'] = round((statista_survey_df['Percentage'] / 100) * total_respondents).astype(int)
-    return statista_survey_df
+    return statista_survey_df.sort_values(by='Respondents', ascending=False)
 
 def load_stack_overflow_data():
     so_survey_df = pd.read_csv('data/stack-overflow-developer-survey-2023/survey_results_public.csv', usecols=['LanguageHaveWorkedWith'])
@@ -31,7 +31,6 @@ def load_jetbrains_data_polars():
 def summarize_jetbrains_data(proglang_data):
     if not isinstance(proglang_data, pl.DataFrame):
         raise TypeError("proglang_data must be a Polars DataFrame")
-    # Updated to use `group_by` and `pl.len()` according to deprecation warnings and removed sorting
     language_counts = proglang_data.group_by('Language').agg(pl.len().alias('Count'))
     return language_counts
 
@@ -44,35 +43,42 @@ def main():
 
     survey_selection = st.sidebar.radio(
         "Choose a survey to display:",
-        ('Stack Overflow Developer Survey', 'Statista Programming Survey', 'JetBrains Developer Ecosystem Survey 2022')
+        ('Statista Programming Survey', 'Stack Overflow Developer Survey', 'JetBrains Developer Ecosystem Survey 2022')
     )
 
-    if survey_selection == 'Stack Overflow Developer Survey':
-        st.header('Stack Overflow Developer Survey - Languages Worked With')
-        fig_so = px.bar(languages_df, y='Language', x='Count', title='Top 10 Programming Languages Used According to Stack Overflow Survey', orientation='h')
-        fig_so.update_layout(yaxis={'categoryorder': 'total descending'}, yaxis_title='Programming Language', xaxis_title='Count')
-        st.plotly_chart(fig_so, use_container_width=True)
-
-    elif survey_selection == 'Statista Programming Survey':
+    if survey_selection == 'Statista Programming Survey':
         st.header('Statista Programming Survey 2023')
         st.markdown("""
             This section presents data from the Statista survey on the most used programming languages worldwide among developers. 
             The data represents a snapshot of the programming landscape, showing the popularity of languages among 87,585 respondents. 
             For more details, [visit the Statista page](https://www.statista.com/statistics/793628/worldwide-developer-survey-most-used-languages/).
         """)
-        # Removed the table display code for Statista survey as requested
         fig_statista = px.bar(statista_survey_df, x='Respondents', y='Language', text='Percentage', orientation='h', title='Top 10 Programming Languages by Number of Respondents')
         fig_statista.update_traces(texttemplate='%{text}%', textposition='inside')
-        fig_statista.update_layout(yaxis={'categoryorder': 'total ascending'}, xaxis_title='Number of Respondents', yaxis_title=None)
+        fig_statista.update_layout(yaxis={'categoryorder': 'total descending'}, xaxis_title='Number of Respondents', yaxis_title=None)
         st.plotly_chart(fig_statista, use_container_width=True)
 
-    elif survey_selection == 'JetBrains Developer Ecosystem Survey 2022':
-        st.header('JetBrains Developer Ecosystem Survey 2022 - Top 10 Programming Languages')
-        top_languages = summarize_jetbrains_data(proglang_data_pl)  # Summarize to get top languages
+    elif survey_selection == 'Stack Overflow Developer Survey':
+        st.header('Stack Overflow Developer Survey - Languages Worked With')
+        st.markdown("""
+            This section presents the top 10 programming languages that developers have worked with according to the Stack Overflow Developer Survey 2023. 
+            To explore more about this survey and its findings, [visit the survey website](https://survey.stackoverflow.co/2023/).
+        """)
+        fig_so = px.bar(languages_df, y='Language', x='Count', title='Top 10 Programming Languages Used According to Stack Overflow Survey', orientation='h')
+        fig_so.update_layout(yaxis={'categoryorder': 'total descending'}, yaxis_title='Programming Language', xaxis_title='Count')
+        st.plotly_chart(fig_so, use_container_width=True)
 
+    elif survey_selection == 'JetBrains Developer Ecosystem Survey 2022':
+        st.header('JetBrains Developer Ecosystem Survey 2022 - Top Programming Languages')
+        st.markdown("""
+        In this section, we explore the top programming languages from the JetBrains Developer Ecosystem Survey 2022.
+        This survey provides insights into the trends within the developer community, particularly focusing on the tools and languages that are gaining popularity.
+        For further details, visit the JetBrains survey page.
+        """)
+        top_languages = summarize_jetbrains_data(proglang_data_pl) # Summarize to get top languages
         # Create and display a bar plot directly from Polars DataFrame
         fig_jetbrains = px.bar(top_languages, x='Count', y='Language', orientation='h', title='Top 10 Programming Languages in JetBrains Developer Ecosystem Survey 2022')
-        fig_jetbrains.update_layout(yaxis={'categoryorder': 'total ascending'}, xaxis_title='Count', yaxis_title='Programming Language')
+        fig_jetbrains.update_layout(yaxis={'categoryorder': 'total descending'}, xaxis_title='Count', yaxis_title='Programming Language')
         st.plotly_chart(fig_jetbrains, use_container_width=True)
 
 if __name__ == "__main__":
